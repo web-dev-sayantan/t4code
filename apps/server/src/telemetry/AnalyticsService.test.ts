@@ -328,6 +328,13 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
       }),
   );
 
+  it.effect("sends nothing without an explicit telemetry opt-in", () =>
+    Effect.gen(function* () {
+      const batches = yield* sendFor(1, respondWithStatus(204), recordTwentyEvents, undefined, {});
+      assert.deepEqual(batches, []);
+    }),
+  );
+
   it.effect("sends nothing on a CI runner unless the environment opts in", () =>
     Effect.gen(function* () {
       const onCi = (telemetryEnv: Parameters<typeof analyticsLayerWith>[2]) =>
