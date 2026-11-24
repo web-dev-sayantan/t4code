@@ -26,6 +26,7 @@ describe("resolveCloudPublicConfig", () => {
         url: null,
       },
       observability: {
+        enabled: false,
         tracesUrl: null,
         tracesDataset: null,
         tracesToken: null,

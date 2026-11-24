@@ -40,7 +40,7 @@ describe("web runtime relay telemetry policy", () => {
       exports: false,
     },
     {
-      surface: "browser before its server has answered",
+      surface: "ordinary browser defaults off",
       desktopBridge: undefined,
       exports: false,
     },
@@ -58,10 +58,10 @@ describe("web runtime relay telemetry policy", () => {
     },
     {
       // The hosted app is served by no T3 server, so nothing can answer for it.
-      surface: "hosted app",
+      surface: "hosted app defaults off",
       desktopBridge: undefined,
       location: new URL("https://app.example.test/"),
-      exports: true,
+      exports: false,
     },
   ])("applies $surface before the first relay span", async (surface) => {
     const { desktopBridge, exports } = surface;

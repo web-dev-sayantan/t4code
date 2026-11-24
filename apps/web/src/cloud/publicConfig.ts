@@ -5,8 +5,6 @@ import {
 import { normalizeSecureRelayUrl } from "@t3tools/shared/relayUrl";
 import * as Schema from "effect/Schema";
 
-import { isHostedStaticApp } from "../hostedPairing";
-
 export class CloudPublicConfigMissingError extends Schema.TaggedError<CloudPublicConfigMissingError>()(
   "CloudPublicConfigMissingError",
   {
@@ -70,13 +68,17 @@ export function setServerRelayTelemetry(allowed: boolean | null): void {
   serverRelayTelemetry = allowed;
 }
 
+const envRelayTelemetryEnabled = () =>
+  trimNonEmpty(import.meta.env.VITE_T3CODE_TELEMETRY_ENABLED)?.toLowerCase() === "true";
+
 export function relayTelemetryEnabled(): boolean | null {
-  if (typeof window === "undefined") return true;
+  if (typeof window === "undefined") return envRelayTelemetryEnabled();
   if (window.desktopBridge) {
     desktopRelayTelemetry ??= window.desktopBridge.getRelayTelemetryEnabled();
     return desktopRelayTelemetry;
   }
-  return serverRelayTelemetry ?? (isHostedStaticApp() ? true : null);
+  // Unknown until the server answers (or forever on the hosted app): keep tracing gated off.
+  return serverRelayTelemetry ?? (envRelayTelemetryEnabled() ? true : null);
 }
 
 export function resolveRelayTracingConfig() {
